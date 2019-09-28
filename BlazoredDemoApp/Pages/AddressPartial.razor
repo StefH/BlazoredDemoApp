@@ -1,0 +1,10 @@
+﻿@using BlazoredDemoApp.Models
+@using Microsoft.AspNetCore.Components
+
+<InputText @bind-Value="@Model.Address.Street" />
+<ValidationMessage For="@(() => Model.Address.Street)" />
+
+@code {
+    [Parameter]
+    public ExampleModel Model { get; set; }
+}

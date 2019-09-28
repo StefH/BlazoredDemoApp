@@ -1,0 +1,42 @@
+﻿@inherits  ToastDemoBase
+@page "/toastdemo"
+
+<h1>Toast Demo</h1>
+
+To show a toast just click one of the buttons below.
+
+<button class="btn btn-info" @onclick="@(() => toastService.ShowInfo("I'm an INFO message"))">Info Toast</button>
+<button class="btn btn-success" @onclick="@(() => toastService.ShowSuccess("I'm a SUCCESS message with a custom title", "Congratulations!"))">Success Toast</button>
+<button class="btn btn-warning" @onclick="@(() => toastService.ShowWarning("I'm a WARNING message"))">Warning Toast</button>
+<button class="btn btn-danger" @onclick="@(() => toastService.ShowError("I'm an ERROR message"))">Error Toast</button>
+
+<BlazoredToasts SuccessIconClass="fa fa-thumbs-up" />
+
+@*@code {
+        CancellationTokenSource cancelationTokenSource = new CancellationTokenSource();
+
+
+        protected override async Task OnInitializedAsync()
+        {
+            await foreach (var d in GetDatesAsync().WithCancellation(cancelationTokenSource.Token))
+            {
+                Console.WriteLine(d);
+                toastService.ShowInfo("x " + d);
+            }
+        }
+
+        public async IAsyncEnumerable<DateTime> GetDatesAsync()
+        {
+            while (!cancelationTokenSource.IsCancellationRequested)
+            {
+                await Task.Delay(5000, cancelationTokenSource.Token);
+                yield return DateTime.Now;
+            }
+        }
+
+        public void Dispose()
+        {
+            cancelationTokenSource.Cancel();
+            Console.WriteLine("done");
+        }
+    }*@

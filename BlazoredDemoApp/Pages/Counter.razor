@@ -1,0 +1,94 @@
+﻿@page "/counter"
+
+@inject IModalService Modal
+
+@using BlazoredDemoApp.Data
+
+<h1>Counter</h1>
+
+<p>Error = @error</p>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary @buttonClass" @onclick="IncrementCount" @onfocusin="OnFocusIn" @onfocusout="OnFocusOut">Click me</button>
+
+<button class="btn btn-primary" @onclick="@ShowModal">Open Modal</button>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Temp. (C)</th>
+            <th>Temp. (F)</th>
+            <th>Summary</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var forecast in forecasts)
+        {
+            <tr>
+                <td>@forecast.Date.ToShortDateString()</td>
+                <td>@forecast.TemperatureC</td>
+                <td>@forecast.TemperatureF</td>
+                <td>@forecast.Summary</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    string error;
+    string buttonClass = "";
+    int currentCount = 0;
+    List<WeatherForecast> forecasts = new List<WeatherForecast>();
+
+    void ShowModal()
+    {
+        Modal.OnClose += ModalClosed;
+        Modal.Show("Edit !", typeof(Edit));
+    }
+
+    void ModalClosed(ModalResult modalResult)
+    {
+        if (modalResult.Cancelled)
+        {
+            Console.WriteLine("Modal was cancelled");
+        }
+        else
+        {
+            Console.WriteLine(modalResult.Data);
+        }
+
+        Modal.OnClose -= ModalClosed;
+    }
+
+
+    void IncrementCount()
+    {
+        currentCount++;
+
+        forecasts.Add(new WeatherForecast { Date = DateTime.Now, Summary = "s" + currentCount, TemperatureC = 20 + currentCount });
+    }
+
+    void OnFocusIn(FocusEventArgs args)
+    {
+        try
+        {
+            int xx = 0;
+            int x = 9 / xx;
+        }
+        catch (Exception e)
+        {
+            error = e.Message;
+        }
+
+        buttonClass = "btn-red";
+        forecasts.Add(new WeatherForecast { Date = DateTime.Now, Summary = args.Type, TemperatureC = 0 });
+    }
+
+    void OnFocusOut(FocusEventArgs args)
+    {
+        buttonClass = "";
+        forecasts.Add(new WeatherForecast { Date = DateTime.Now, Summary = args.Type, TemperatureC = 0 });
+    }
+}

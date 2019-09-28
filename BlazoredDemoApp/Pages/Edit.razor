@@ -1,0 +1,113 @@
+﻿@page "/edit"
+
+@inject IModalService Modal
+
+@using System.Linq.Expressions
+@using System.Reflection
+@using BlazoredDemoApp.Data
+@using BlazoredDemoApp.Models
+@using Microsoft.AspNetCore.Components
+
+<EditForm Model="@exampleModel" OnValidSubmit="@HandleValidSubmit">
+
+    <FluentValidationValidator />
+    @*<DataAnnotationsValidator />*@
+
+    <InputText id="name" @bind-Value="@exampleModel.Name" @onchange="@(e => OnChange(e, x => x.Name))" />
+    <ValidationMessage For="@(() => exampleModel.Name)" />
+
+    <AddressPartial Model="@exampleModel" />
+    @*<AddressPartial2 Model="@exampleModel.Address" />*@
+
+    <button class="btn btn-primary" type="submit" disabled="@SubmitDisabled">Submit</button>
+    <button class="btn btn-secondary" type="button" @onclick="OnClickCancel">Cancel</button>
+</EditForm>
+
+@code {
+    //public FluentValidationValidatorNew fluentValidationValidatorNew;
+
+    ExampleModel exampleModel { get; set; } = new ExampleModel { Name = "n", Address = new AddressModel { Street = "s" } };
+
+    protected string SubmitDisabled { get; set; } = null;
+
+
+    [CascadingParameter]
+    private EditContext FormEditContext { get; set; }
+
+    bool IsValid { get; set; }
+
+    protected override void OnInitialized()
+    {
+        FormEditContext.OnValidationStateChanged += HandleValidationStateChanged;
+    }
+
+    private void HandleValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+    {
+        // Check form state and enable or disable button accordingly
+        if (FormEditContext.Validate())
+        {
+            SubmitDisabled = null;
+        }
+        else
+        {
+            SubmitDisabled = "disabled";
+        }
+    }
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            // fluentValidationValidatorNew.CurrentEditContext.OnValidationStateChanged += CurrentEditContextOnOnValidationStateChanged;
+        }
+    }
+
+    private void CurrentEditContextOnOnValidationStateChanged(object sender, ValidationStateChangedEventArgs e)
+    {
+        // SetOkDisabledStatus((EditContext)sender);
+    }
+
+
+    void OnChange<T>(ChangeEventArgs e, Expression<Func<ExampleModel, T>> expression)
+    {
+        //var memberExpression = (MemberExpression)expression.Body;
+        //var property = (PropertyInfo)memberExpression.Member;
+
+        //var value = property.GetValue(exampleModel);
+        // property.SetValue(exampleModel, e.Value);
+
+        //var id = fluentValidationValidatorNew.CurrentEditContext.Field(property.Name);
+
+        //fluentValidationValidatorNew.CurrentEditContext.NotifyFieldChanged(id);
+        //EditContext.NotifyValidationStateChanged();
+    }
+
+
+
+    private void SetOkDisabledStatus(EditContext context)
+    {
+        //if (!context.GetValidationMessages().Any())
+        //{
+        //    SubmitDisabled = null;
+        //}
+        //else
+        //{
+        //    SubmitDisabled = "disabled";
+        //}
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+
+        Modal.Close(ModalResult.Ok(42));
+    }
+
+    void OnClickCancel()
+    {
+        Modal.Cancel();
+    }
+}
